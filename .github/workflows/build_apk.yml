@@ -14,8 +14,11 @@ on:
 
 jobs:
   build:
-    name: Build Flutter APK & Run Tests
+    name: Build & Release APK
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Code
@@ -42,19 +45,34 @@ jobs:
       - name: Run Tests
         run: flutter test
 
-      - name: Build Release APK
+      - name: Build Universal Release APK
         run: flutter build apk --release
 
-      - name: Upload APK Artifact
+      - name: Upload APK Artifact to Actions
         uses: actions/upload-artifact@v4
         with:
           name: SuperMart_Billing_App-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Create GitHub Release (On Version Tags)
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Create or Update Release on GitHub
+        if: github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'latest' }}
+          name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'Super Mart Billing App - Latest Build' }}
+          body: |
+            ## Super Mart Billing Application - Release APK
+            
+            This automated release includes the compiled APK for the Super Mart Billing Application.
+            
+            ### Included Features:
+            - Product Catalogue (Milk, Bread, Butter, Rice, Sugar, Tea + Custom Products)
+            - Cart Management & Billing Calculations (Subtotal, GST 18%, Tiered 5%/10% Discount, Grand Total)
+            - Receipt Preview & PDF Generation
+            - Save PDF to Device Downloads folder with View/Print/Share options
+            - Send Plain Text Receipts via WhatsApp & SMS
+            - Custom Product Creation & Editing with SQLite Local Database Persistence
+            - Editable Store Name, City, and State Dropdowns
           files: build/app/outputs/flutter-apk/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
