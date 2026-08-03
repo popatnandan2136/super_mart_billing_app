@@ -45,7 +45,7 @@ class Product {
       price: (map['price'] as num).toDouble(),
       unit: map['unit'] as String? ?? 'pack',
       icon: IconData(
-        map['iconCodePoint'] as int? ?? Icons.shopping_bag_rounded.codePoint,
+        map['iconCodePoint'] as int? ?? 0xe59c,
         fontFamily: 'MaterialIcons',
       ),
       color: Color(map['colorValue'] as int? ?? 0xFF0F9D58),
