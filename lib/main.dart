@@ -8,6 +8,7 @@ void main() {
   runApp(const SuperMartBillingApp());
 }
 
+
 class SuperMartBillingApp extends StatelessWidget {
   const SuperMartBillingApp({super.key});
 
